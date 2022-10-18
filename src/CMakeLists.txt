@@ -18,11 +18,9 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV}
   VERBATIM
 )
 
-add_custom_target(${HEADLESS_SERV} ALL DEPENDS
+add_custom_target(headless_serv ALL DEPENDS
   ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV}
 )
-
-add_dependencies(${HEADLESS_SERV} gen_rpc)
 
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV} DESTINATION bin)
 
@@ -40,6 +38,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libheadless.so
 
 add_custom_target(libheadless ALL DEPENDS
   ${CMAKE_CURRENT_BINARY_DIR}/libheadless.so
+  headless_serv
 )
 
 add_dependencies(libheadless gen_rpc)
