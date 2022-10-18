@@ -4,7 +4,7 @@ package headless;
 option go_package = ".;proto";
 
 service Headless {
-        rpc SendMessage(stream Cmd) returns (stream Cmd) {};
+        rpc Connect(stream Cmd) returns (stream Cmd) {};
 }
 
 enum CmdType {

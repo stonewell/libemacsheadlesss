@@ -1,10 +1,7 @@
-set(HEADLESS_SERV headless-serv)
+set(HEADLESS_SERV headless-serv${CMAKE_EXECUTABLE_SUFFIX})
+set(HEADLESS_LIB ${CMAKE_SHARED_LIBRARY_PREFIX}headless${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 file(GLOB HEADLESS_SERV_SOURCES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.go")
-
-set (RPC_SOURCES ${CMAKE_CURRENT_LIST_DIR}/../proto/emacsheadless.pb.go
-  ${CMAKE_CURRENT_LIST_DIR}/../proto/emacsheadless_grpc.pb.go
-)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV}
   COMMAND env GOPATH=${GOPATH} ${CMAKE_Go_COMPILER} build
@@ -18,16 +15,10 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV}
   VERBATIM
 )
 
-add_custom_target(headless_serv ALL DEPENDS
-  ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV}
-)
-
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV} DESTINATION bin)
-
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libheadless.so
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_LIB}
   COMMAND env GOPATH=${GOPATH} ${CMAKE_Go_COMPILER} build
   -buildmode=c-shared
-  -o ${CMAKE_CURRENT_BINARY_DIR}/libheadless.so
+  -o ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_LIB}
   ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS   gen_rpc
     ${HEADLESS_SERV_SOURCES}
@@ -37,10 +28,16 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libheadless.so
 )
 
 add_custom_target(libheadless ALL DEPENDS
-  ${CMAKE_CURRENT_BINARY_DIR}/libheadless.so
-  headless_serv
+  ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_LIB}
 )
 
 add_dependencies(libheadless gen_rpc)
 
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/libheadless.so DESTINATION lib)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_LIB} DESTINATION lib)
+
+add_custom_target(headless_serv ALL DEPENDS
+  ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV}
+  libheadless
+)
+
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${HEADLESS_SERV} DESTINATION bin)
