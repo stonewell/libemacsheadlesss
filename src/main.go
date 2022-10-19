@@ -1,5 +1,10 @@
 package main
 
+/*
+   #include "headless.h"
+*/
+import "C"
+
 import (
 	"io"
 	"net"
@@ -13,7 +18,7 @@ type server struct {
 }
 
 func main() {
-	start_server()
+	start_server(&C.ServerCallbacks{})
 }
 
 func (*server) Connect(stream pb.Headless_ConnectServer) error {
@@ -38,8 +43,11 @@ func (*server) Connect(stream pb.Headless_ConnectServer) error {
 	}
 }
 
-func start_server() {
+//export start_server
+func start_server(callback * C.ServerCallbacks) {
 	log.Info("Starting the server...")
+
+	C.bridge_keyboard_input(callback.input, 42)
 
 	lis, err := net.Listen("tcp", ":3000")
 	if err != nil {
