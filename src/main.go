@@ -18,7 +18,7 @@ type server struct {
 }
 
 func main() {
-	start_server(&C.ServerCallbacks{})
+	StartServer(nil)
 }
 
 func (*server) Connect(stream pb.Headless_ConnectServer) error {
@@ -43,11 +43,9 @@ func (*server) Connect(stream pb.Headless_ConnectServer) error {
 	}
 }
 
-//export start_server
-func start_server(callback * C.ServerCallbacks) {
+//export StartServer
+func StartServer(sc *C.ServerConfig) {
 	log.Info("Starting the server...")
-
-	C.bridge_keyboard_input(callback.input, 42)
 
 	lis, err := net.Listen("tcp", ":3000")
 	if err != nil {
@@ -60,4 +58,8 @@ func start_server(callback * C.ServerCallbacks) {
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
+}
+
+//export RegisterClientCallback
+func RegisterClientCallback(clientId int, callback * C.ClientCallbacks) {
 }
