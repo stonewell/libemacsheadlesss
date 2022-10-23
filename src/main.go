@@ -13,15 +13,24 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type server struct {
+type Server struct {
 	pb.UnimplementedHeadlessServer
+
+	sc *C.ServerConfig
+	clients map[int]Client
+}
+
+type Client struct {
+	clientId int
+	callback * C.ClientCallbacks
+	stream pb.Headless_ConnectServer
 }
 
 func main() {
 	StartServer(nil)
 }
 
-func (*server) Connect(stream pb.Headless_ConnectServer) error {
+func (self *Server) Connect(stream pb.Headless_ConnectServer) error {
 	log.Info("Connect Function")
 
 	for {
@@ -40,6 +49,17 @@ func (*server) Connect(stream pb.Headless_ConnectServer) error {
 		}
 
 		log.Println("recv req:", req.Type)
+
+		switch req.Type {
+		case pb.CmdType_Cmd_NewClient:
+			self.OnNewClient(stream)
+		case pb.CmdType_Cmd_ClientDisconnect:
+		case pb.CmdType_Cmd_ClientInfo:
+		case pb.CmdType_Cmd_Nope:
+			log.Println("Nope command type:")
+		default:
+			log.Println("Invalid command type:", req.Type)
+		}
 	}
 }
 
@@ -53,7 +73,13 @@ func StartServer(sc *C.ServerConfig) {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterHeadlessServer(s, &server{})
+
+	s_impl := Server {
+		sc: sc,
+		clients: make(map[int]Client),
+	}
+
+	pb.RegisterHeadlessServer(s, &s_impl)
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
@@ -62,4 +88,11 @@ func StartServer(sc *C.ServerConfig) {
 
 //export RegisterClientCallback
 func RegisterClientCallback(clientId int, callback * C.ClientCallbacks) {
+}
+
+//export DisconnectClient
+func DisconnectClient(clientId int) {
+}
+
+func (self * Server)OnNewClient(stream pb.Headless_ConnectServer) {
 }

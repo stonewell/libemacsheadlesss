@@ -8,10 +8,17 @@ service Headless {
 }
 
 enum CmdType {
-  NewClient = 0;
-  DrawChar = 1;
+  Cmd_Nope = 0;
+  Cmd_NewClient = 1;
+  Cmd_ClientDisconnect = 2;
+  Cmd_ClientInfo = 3;
 }
 
 message Cmd {
   CmdType type = 1;
+  ClientInfo clientInfo = 2;
+}
+
+message ClientInfo {
+  int32 clientId = 1;
 }

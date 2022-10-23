@@ -31,7 +31,7 @@ func main() {
 	}
 
 	stream.Send(&pb.Cmd {
-		Type: pb.CmdType_DrawChar,
+		Type: pb.CmdType_Cmd_NewClient,
 	})
 
 	time.Sleep(1 * time.Second)

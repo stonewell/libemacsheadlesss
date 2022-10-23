@@ -5,6 +5,7 @@
 
 typedef void (*keyboard_input)(uint32_t keycode);
 typedef void (*new_client)(uint32_t clientId);
+typedef void (*client_disconnect)(uint32_t clientId);
 
 typedef struct tagClientCallbacks {
   keyboard_input input;
@@ -15,9 +16,11 @@ typedef struct tagServerConfig {
   const char * addr;
 
   new_client new_client_callback;
+  client_disconnect client_disconnect_callback;
 } ServerConfig;
 
 void bridge_keyboard_input(keyboard_input input, uint32_t keycode);
 void bridge_new_client(new_client nc, uint32_t clientId);
+void bridge_client_disconnect(client_disconnect cd, uint32_t clientId);
 
 #endif //__HEADLESS__H__
