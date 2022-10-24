@@ -8,5 +8,6 @@ include(cmake/golang.cmake)
 include(cmake/flags.cmake)
 
 add_subdirectory(proto)
-add_subdirectory(src)
+add_subdirectory(pkg)
+add_subdirectory(internal)
 add_subdirectory(test)
