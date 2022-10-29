@@ -56,7 +56,7 @@ func (self *ServerConfig) GetPort() uint {
 }
 
 func (self *ServerConfig) OnNewClient(clientId uint) {
-
+	log.Debug("On NewClient:", clientId)
 }
 
 func (self *ServerConfig) OnClientDisconnect(clientId uint) {
@@ -65,7 +65,7 @@ func (self *ServerConfig) OnClientDisconnect(clientId uint) {
 func StartServer(sc ServerConfigInterface) {
 	addr := fmt.Sprintf("%s:%d", sc.GetAddr(), sc.GetPort())
 
-	log.Info("Starting the server...", addr)
+	log.Debug("Starting the server...", addr)
 
 	lis, err := net.Listen("tcp", addr)
 
@@ -91,7 +91,7 @@ func StartServer(sc ServerConfigInterface) {
 }
 
 func (self *Server) Connect(stream pb.Headless_ConnectServer) error {
-	log.Info("Connect Function")
+	log.Debug("Connect Function")
 
 	for {
 		// Receive the request and possible error from the stream object
@@ -104,11 +104,11 @@ func (self *Server) Connect(stream pb.Headless_ConnectServer) error {
 
 		// Handle error from the stream object
 		if err != nil {
-			log.Println("Error when reading client request stream:", err)
+			log.Error("Error when reading client request stream:", err)
 			return err
 		}
 
-		log.Println("recv req:", req.Type)
+		log.Debug("recv req:", req.Type)
 
 		switch req.Type {
 		case pb.CmdType_Cmd_NewClient:
@@ -125,6 +125,8 @@ func (self *Server) Connect(stream pb.Headless_ConnectServer) error {
 }
 
 func (self *Server) OnNewClient(stream pb.Headless_ConnectServer) {
+	log.Debug("Client Life Cycle:On NewClient")
+
 	self.ClientChannel <- ClientOP{
 		Op: pb.CmdType_Cmd_NewClient,
 		Client: Client{
@@ -136,6 +138,8 @@ func (self *Server) OnNewClient(stream pb.Headless_ConnectServer) {
 
 func ClientLifeCycleOp(server *Server) {
 	for clientOP := range server.ClientChannel {
+		log.Debug("Client Life Cycle OP", clientOP.Op)
+
 		switch clientOP.Op {
 		case pb.CmdType_Cmd_NewClient:
 			clientCount := int32(len(server.Clients))
