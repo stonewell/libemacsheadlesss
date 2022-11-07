@@ -10,6 +10,9 @@ import (
 	pb "github.com/stonewell/emacsheadless/proto"
 )
 
+func main() {
+}
+
 type CServerConfig struct {
 	ehs.ServerConfig
 
@@ -17,7 +20,7 @@ type CServerConfig struct {
 }
 
 type CClientCallbacks struct {
-	cc * C.ClientCallbacks
+	cc *C.ClientCallbacks
 }
 
 //export StartServer
@@ -74,5 +77,70 @@ func (self *CClientCallbacks) KeyboardInput(keycode uint) {
 	}
 }
 
-func main() {
+//export CursorTo
+func CursorTo(terminalId int32, vpos int32, hpos int32) {
+}
+
+//export RawCursorTo
+func RawCursorTo(terminalId int32, row int32, col int32) {
+}
+
+//export ClearToEnd
+func ClearToEnd(terminal_id int32) {
+}
+
+//export ClearFrame
+func ClearFrame(terminal_id int32) {
+}
+
+//export ClearEndOfLine
+func ClearEndOfLine(terminal_id int32, first_unused_hpos int32) {
+}
+
+//export InsDelLines
+func InsDelLines(terminal_id int32, vpos int32, n int32) {
+}
+
+//export InsertGlyphs
+func InsertGlyphs(terminal_id int32, start string, len int32) {
+}
+
+//export WriteGlyphs
+func WriteGlyphs(terminal_id int32, data string, len int32) {
+}
+
+//export DeleteGlyphs
+func DeleteGlyphs(terminal_id int32, n int32) {
+}
+
+//export RingBell
+func RingBell(terminal_id int32) {
+}
+
+//export ResetTerminalModes
+func ResetTerminalModes(terminal_id int32) {
+}
+
+//export SetTerminalModes
+func SetTerminalModes(terminal_id int32) {
+}
+
+//export UpdateEnd
+func UpdateEnd(terminal_id int32) {
+}
+
+//export SetTerminalWindow
+func SetTerminalWindow(terminal_id int32, size int32) {
+}
+
+//export ReadAvailInput
+func ReadAvailInput(terminal_id int32) {
+}
+
+//export DeleteFrame
+func DeleteFrame(terminal_id int32) {
+}
+
+//export DeleteTerminal
+func DeleteTerminal(terminal_id int32) {
 }
